@@ -1,0 +1,110 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "map.tmx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "levels/0/bomb.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/0/coin.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/0/dec.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/0/enemy.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/0/flower.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/0/flower2.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/0/flower3.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/0/player.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/0/redbox.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/0/setup_player.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/0/terrain.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "map.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 6,
+            "viewCenter": {
+                "x": 488,
+                "y": 240
+            }
+        },
+        "mushroom.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.exportedFilePath": "D:/gameProject2/levels/0",
+    "last.imagePath": "D:/gameProject2/graphics/item",
+    "map.height": 11,
+    "map.lastUsedExportFilter": "CSV files (*.csv)",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 64,
+    "map.tileWidth": 64,
+    "map.width": 240,
+    "openFiles": [
+        "map.tmx",
+        "levels/0/terrain.tsx",
+        "levels/0/coin.tsx",
+        "levels/0/bomb.tsx",
+        "levels/0/dec.tsx",
+        "levels/0/flower.tsx",
+        "levels/0/flower2.tsx",
+        "levels/0/flower3.tsx",
+        "mushroom.tsx",
+        "levels/0/player.tsx",
+        "levels/0/enemy.tsx",
+        "levels/0/redbox.tsx",
+        "levels/0/setup_player.tsx"
+    ],
+    "project": "tile_map.tiled-project",
+    "recentFiles": [
+        "levels/0/setup_player.tsx",
+        "levels/0/redbox.tsx",
+        "levels/0/enemy.tsx",
+        "levels/0/player.tsx",
+        "mushroom.tsx",
+        "levels/0/flower3.tsx",
+        "levels/0/flower2.tsx",
+        "levels/0/flower.tsx",
+        "levels/0/dec.tsx",
+        "levels/0/bomb.tsx",
+        "levels/0/coin.tsx",
+        "levels/0/terrain.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 64,
+        "width": 64
+    }
+}
