@@ -53,10 +53,10 @@
         },
         "map.tmx": {
             "scale": 0.5,
-            "selectedLayer": 6,
+            "selectedLayer": 7,
             "viewCenter": {
-                "x": 488,
-                "y": 240
+                "x": 6766,
+                "y": 336
             }
         },
         "mushroom.tsx": {

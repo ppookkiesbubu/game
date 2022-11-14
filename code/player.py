@@ -7,7 +7,6 @@ class Player(pygame.sprite.Sprite):
         self.import_character_assets()
         self.frame_index = 0
         self.animation_speed = 0.15
-        # print(self.animations['idle'])
         self.image = self.animations['idle'][self.frame_index]
         self.rect = self.image.get_rect(topleft = pos)
 
@@ -16,6 +15,8 @@ class Player(pygame.sprite.Sprite):
         self.speed = 8
         self.gravity = 0.8
         self.jump_speed = -18
+        self.collision_rect = pygame.Rect(self.rect.topleft,(50,self.rect.height))
+        self.jump_sound = pygame.mixer.Sound('../graphics/sound/jump.wav')
 
         #player status
         self.status = 'idle'
@@ -24,6 +25,7 @@ class Player(pygame.sprite.Sprite):
         self.on_ceiling = False
         self.on_left = False
         self.on_right = False
+
 
     def import_character_assets(self):
         character_path = '../graphics/player_resize/'
@@ -46,23 +48,25 @@ class Player(pygame.sprite.Sprite):
         image = animation[int(self.frame_index)]
         if self.facing_right:
             self.image = image
+            self.rect.bottomleft = self.collision_rect.bottomleft
         else:
             flipped_image = pygame.transform.flip(image,True,False)
             self.image = flipped_image
+            self.rect.bottomright = self.collision_rect.bottomright
 
-        #set the rect
-        if self.on_ground and self.on_right:
-            self.rect = self.image.get_rect(bottomright = self.rect.bottomright)
-        elif self.on_ground and self.on_left:
-            self.rect = self.image.get_rect(bottomleft = self.rect.bottomleft)
-        elif self.on_ground:
-            self.rect = self.image.get_rect(midbottom = self.rect.midbottom)
-        elif self.on_ceiling and self.on_right:
-            self.rect = self.image.get_rect(topright = self.rect.topright)
-        elif self.on_ceiling and self.on_left:
-            self.rect = self.image.get_rect(topleft = self.rect.topleft)
-        elif self.on_ceiling:
-            self.rect = self.image.get_rect(midtop = self.rect.midtop)
+        # #set the rect
+        # if self.on_ground and self.on_right:
+        #     self.rect = self.image.get_rect(bottomright = self.rect.bottomright)
+        # elif self.on_ground and self.on_left:
+        #     self.rect = self.image.get_rect(bottomleft = self.rect.bottomleft)
+        # elif self.on_ground:
+        #     self.rect = self.image.get_rect(midbottom = self.rect.midbottom)
+        # elif self.on_ceiling and self.on_right:
+        #     self.rect = self.image.get_rect(topright = self.rect.topright)
+        # elif self.on_ceiling and self.on_left:
+        #     self.rect = self.image.get_rect(topleft = self.rect.topleft)
+        # elif self.on_ceiling:
+        #     self.rect = self.image.get_rect(midtop = self.rect.midtop)
 
     def get_input(self):
         keys = pygame.key.get_pressed()
@@ -96,10 +100,13 @@ class Player(pygame.sprite.Sprite):
 
     def apply_gravity(self):
         self.direction.y += self.gravity
-        self.rect.y += self.direction.y
+        self.collision_rect.y += self.direction.y
 
     def jump(self):
+        self.jump_sound.play()
         self.direction.y = self.jump_speed
+
+    
 
     def update(self):
         self.get_input()
