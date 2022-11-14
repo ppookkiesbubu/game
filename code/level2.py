@@ -1,3 +1,4 @@
+from random import randint
 import pygame
 from support2 import import_csv_layout,import_cut_graphics
 from setting2 import tile_size , screen_height ,screen_width
@@ -23,7 +24,7 @@ class Level:
         self.collision_sound = pygame.mixer.Sound('../graphics/sound/collision3.wav')
         self.gameover_sound  = pygame.mixer.Sound('../graphics/sound/gameover2.wav')
         self.bg_sound = pygame.mixer.Sound('../graphics/sound/bgsound.wav')
-        self.bg_sound.play()
+        self.bg_sound.play(-1)
 
 
         #health bar
@@ -53,6 +54,9 @@ class Level:
         #bomb
         bomb_layout = import_csv_layout(level_data['bomb'])
         self.bomb_sprites = self.create_tile_group(bomb_layout,'bomb')
+        self.get_bomb = 0
+        self.time_slow = 300
+        self.status_slow = 0
 
         #enemy
         enemy_layout = import_csv_layout(level_data['enemy'])
@@ -239,29 +243,43 @@ class Level:
                     self.cur_health -= 1
 
     def check_bomb(self):
-        eiei = 0
-        bomb_collision = pygame.sprite.spritecollide(self.player.sprite,self.bomb_sprites,True)
+        
         keys = pygame.key.get_pressed()
-        if bomb_collision:
+        if pygame.sprite.spritecollide(self.player.sprite,self.bomb_sprites,True):
+            self.get_bomb += 1
             self.bomb_sound.play()
-            if keys[pygame.K_SPACE]:
-                pass
+        if keys[pygame.K_SPACE] and self.get_bomb >= 1:
+            self.get_bomb -= 1
+            for enemy in self.enemy_sprites:
+                enemy.speed = 1
+            self.status_slow = 1
+        if self.status_slow == 1:
+            self.time_slow -= 1
+            if self.time_slow  <= 0 :
+                self.time_slow = 300
+                self.status_slow = 0
+                for enemy in self.enemy_sprites:
+                    enemy.speed = randint(3,5)
 
     def check_game_over(self):
-        if self.cur_health <= 0 or self.player.sprite.direction.y >= 35:
-            self.gameover_sound.play()
-            self.collision_sound.stop()
-            self.bg_sound.stop()
-            self.cur_health = 0
-            game_over = self.font.render('GAME OVER',False,'#33323d')
-            self.display_surface.blit(game_over,(500,43))
-            self.check_state = False
+        while self.run_state:
+            if self.cur_health <= 0 or self.player.sprite.direction.y >= 35:
+                self.gameover_sound.play()
+                self.collision_sound.stop()
+                self.bg_sound.stop()
+                self.cur_health = 0
+                game_over = self.font.render('GAME OVER',False,'#33323d')
+                self.display_surface.blit(game_over,(500,43))
+                self.check_state = False
+                self.run_state = False
             
     
     def check_win(self):
         if self.coin <= 0:
             game_win = self.font.render('YOU WIN!!!',False,'#33323d')
             self.display_surface.blit(game_win,(500,43))
+            self.check_state = False
+
         
 
 
@@ -270,7 +288,7 @@ class Level:
         # self.bg = pygame.image.load('../graphics/sky/sky.png').convert()
         # self.bg_rect = self.bg.get_rect(topleft = (0,0))
         # self.display_surface.blit(self.bg, self.bg_rect)
-
+        print("in files")
         #run the entire game / level
         self.terrain_sprites.draw(self.display_surface)
         self.terrain_sprites.update(self.world_shift)
