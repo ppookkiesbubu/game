@@ -14,8 +14,14 @@ class Level:
         self.display_surface = surface
         self.world_shift = 0
 
-        #check state
-        self.run_state = True
+        #time
+        self.clock = pygame.time.Clock()
+        self.sec = 0
+        self.sec_count = 0
+        self.sec = self.clock.tick(60)/1000
+
+        self.time_state = 0
+        self.check_state = 0
 
         #audio
         self.coin_sound = pygame.mixer.Sound('../graphics/sound/coin.wav')
@@ -24,7 +30,7 @@ class Level:
         self.collision_sound = pygame.mixer.Sound('../graphics/sound/collision3.wav')
         self.gameover_sound  = pygame.mixer.Sound('../graphics/sound/gameover2.wav')
         self.bg_sound = pygame.mixer.Sound('../graphics/sound/bgsound.wav')
-        self.bg_sound.play(-1)
+        # self.bg_sound.play(-1)
 
 
         #health bar
@@ -35,7 +41,6 @@ class Level:
         #ui
         self.ui = UI(pygame.display.set_mode((screen_width,screen_height)))
         self.font = pygame.font.Font('../graphics/ui/font.ttf',30)
-        self.check_state = True
 
         #player
         player_layout = import_csv_layout(level_data['player'])
@@ -166,68 +171,69 @@ class Level:
         self.dust_sprite.add(jump_particle_sprite)
 
     def horizontal_movement_collision(self):
-        if self.check_state:
-            player = self.player.sprite
-            player.collision_rect.x += player.direction.x * player.speed
+        # if self.check_state == 0:
+        player = self.player.sprite
+        player.collision_rect.x += player.direction.x * player.speed
 
-            for sprite in self.terrain_sprites.sprites():
-                if sprite.rect.colliderect(player.rect):
-                    if player.direction.x < 0:
-                        player.collision_rect.left = sprite.rect.right
-                        player.on_left = True
-                        self.current_x = player.rect.left
-                    elif player.direction.x > 0:
-                        player.collision_rect.right = sprite.rect.left
-                        player.on_right = True
-                        self.current_x = player.rect.right
+        for sprite in self.terrain_sprites.sprites():
+            if sprite.rect.colliderect(player.rect):
+                if player.direction.x < 0:
+                    player.collision_rect.left = sprite.rect.right
+                    player.on_left = True
+                    self.current_x = player.rect.left
+                elif player.direction.x > 0:
+                    player.collision_rect.right = sprite.rect.left
+                    player.on_right = True
+                    self.current_x = player.rect.right
                     
     def vertical_movement_collision(self):
-        if self.check_state:
-            player = self.player.sprite
-            player.apply_gravity()
+        # if self.check_state == 0:
+        player = self.player.sprite
+        player.apply_gravity()
 
-            for sprite in self.terrain_sprites.sprites():
-                if sprite.rect.colliderect(player.collision_rect):
-                    if player.direction.y > 0:
-                        player.collision_rect.bottom = sprite.rect.top
-                        player.direction.y = 0
-                        player.on_ground = True
-                    elif player.direction.y < 0:
-                        player.collision_rect.top = sprite.rect.bottom
-                        player.direction.y = 0
-                        player.on_ceiling = True
+        for sprite in self.terrain_sprites.sprites():
+            if sprite.rect.colliderect(player.collision_rect):
+                if player.direction.y > 0:
+                    player.collision_rect.bottom = sprite.rect.top
+                    player.direction.y = 0
+                    player.on_ground = True
+                elif player.direction.y < 0:
+                    player.collision_rect.top = sprite.rect.bottom
+                    player.direction.y = 0
+                    player.on_ceiling = True
 
-            if player.on_ground and player.direction.y < 0 or player.direction.y >1:
-                player.on_ground = False
+        if player.on_ground and player.direction.y < 0 or player.direction.y >1:
+            player.on_ground = False
 
     def scroll_x(self):
-        if self.check_state:
-            player = self.player.sprite
-            player_x = player.rect.centerx
-            direction_x = player.direction.x
+        # if self.check_state == 0:
+        player = self.player.sprite
+        player_x = player.rect.centerx
+        direction_x = player.direction.x
 
-            if player_x < screen_width / 2 and direction_x < 0:
-                self.world_shift = 8
-                player.speed = 0
-            elif player_x > screen_width - (screen_width / 2) and direction_x > 0:
-                self.world_shift = -8
-                player.speed = 0
-            else:
-                self.world_shift = 0
-                player.speed = 8
+        if player_x < screen_width / 2 and direction_x < 0:
+            self.world_shift = 8
+            player.speed = 0
+        elif player_x > screen_width - (screen_width / 2) and direction_x > 0:
+            self.world_shift = -8
+            player.speed = 0
+        else:
+            self.world_shift = 0
+            player.speed = 8
 
     def change_coin(self,amount):
         self.coin -=  amount  
 
     def check_coin_collisions(self):
-        if self.check_state:
-            collided_coin = pygame.sprite.spritecollide(self.player.sprite,self.coin_sprites,True)
-            if collided_coin:
-                self.coin_sound.play()
-                for coin in collided_coin:
-                    self.change_coin(1)
+        # if self.check_state == 0:
+        collided_coin = pygame.sprite.spritecollide(self.player.sprite,self.coin_sprites,True)
+        if collided_coin:
+            self.coin_sound.play()
+            for coin in collided_coin:
+                self.change_coin(1)
 
     def check_enemy_collision(self):
+        # if self.check_state == 0:
         enemy_collision = pygame.sprite.spritecollide(self.player.sprite,self.enemy_sprites,False)
 
         if enemy_collision:
@@ -242,8 +248,7 @@ class Level:
                 else:
                     self.cur_health -= 1
 
-    def check_bomb(self):
-        
+    def check_bomb(self):   
         keys = pygame.key.get_pressed()
         if pygame.sprite.spritecollide(self.player.sprite,self.bomb_sprites,True):
             self.get_bomb += 1
@@ -262,25 +267,40 @@ class Level:
                     enemy.speed = randint(3,5)
 
     def check_game_over(self):
-        while self.run_state:
-            if self.cur_health <= 0 or self.player.sprite.direction.y >= 35:
-                self.gameover_sound.play()
-                self.collision_sound.stop()
-                self.bg_sound.stop()
-                self.cur_health = 0
-                game_over = self.font.render('GAME OVER',False,'#33323d')
-                self.display_surface.blit(game_over,(500,43))
-                self.check_state = False
-                self.run_state = False
-            
-    
-    def check_win(self):
-        if self.coin <= 0:
-            game_win = self.font.render('YOU WIN!!!',False,'#33323d')
-            self.display_surface.blit(game_win,(500,43))
-            self.check_state = False
+      
+        if self.cur_health <= 0 or self.player.sprite.direction.y >= 35:
+            global game_status
+            self.gameover_sound.play()
+            self.collision_sound.stop()
+            self.bg_sound.stop()
+            self.cur_health = 0
+            game_over = self.font.render('GAME OVER',False,'#33323d')
+            self.display_surface.blit(game_over,(500,43))
+            self.check_state = 1
+            game_status = 0
+            self.time_state = 1
 
-        
+    def check_win(self):
+            if self.coin <= 0:
+                game_win = self.font.render('YOU WIN!!!',False,'#33323d')
+                self.display_surface.blit(game_win,(500,43))
+                self.check_state = 1
+                self.time_state = 1
+                game_status = 0
+
+    def time(self,sc):    
+        # self.sec = self.clock.tick(30)/1000
+        global time_count
+        if self.check_state == 0:
+            self.sec_count += self.sec 
+            time_count = float("{:.2f}".format(self.sec_count))
+            
+    def show_time(self):
+        if self.time_state == 0:
+            self.time(1)
+            sec_surf = self.font.render(str(time_count),False,'#33323d')
+            # sec_rect = sec_surf.get_rect(midleft = (self.sec_rect.right+4,self.sec_rect.centery))
+            self.display_surface.blit(sec_surf,(1075,20))
 
 
     def run(self):
@@ -288,7 +308,6 @@ class Level:
         # self.bg = pygame.image.load('../graphics/sky/sky.png').convert()
         # self.bg_rect = self.bg.get_rect(topleft = (0,0))
         # self.display_surface.blit(self.bg, self.bg_rect)
-        print("in files")
         #run the entire game / level
         self.terrain_sprites.draw(self.display_surface)
         self.terrain_sprites.update(self.world_shift)
@@ -326,15 +345,14 @@ class Level:
 
         #player sprites
         self.player.update()
-        self.horizontal_movement_collision()
-        self.vertical_movement_collision()
-        self.scroll_x()
         self.player.draw(self.display_surface)
         self.goal.update(self.world_shift)
         self.goal.draw(self.display_surface)
 
         self.ui.show_health(self.cur_health,self.max_health)
         self.ui.show_coin(self.coin)
+        self.show_time()
+       
 
         self.check_coin_collisions()
         self.check_enemy_collision()
@@ -342,3 +360,7 @@ class Level:
         self.check_win()
         self.check_bomb()
 
+        if self.check_state == 0:
+            self.horizontal_movement_collision()
+            self.vertical_movement_collision()
+            self.scroll_x()
