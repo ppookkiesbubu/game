@@ -29,6 +29,7 @@ class Level:
         self.bomb_sound = pygame.mixer.Sound('../graphics/sound/item2.wav')
         self.collision_sound = pygame.mixer.Sound('../graphics/sound/collision3.wav')
         self.gameover_sound  = pygame.mixer.Sound('../graphics/sound/gameover2.wav')
+        self.bombbomb_sound = pygame.mixer.Sound('../graphics/sound/bomb.wav')
         self.bg_sound = pygame.mixer.Sound('../graphics/sound/bgsound.wav')
         # self.bg_sound.play(-1)
 
@@ -254,6 +255,7 @@ class Level:
             self.get_bomb += 1
             self.bomb_sound.play()
         if keys[pygame.K_SPACE] and self.get_bomb >= 1:
+            self.bombbomb_sound.play()
             self.get_bomb -= 1
             for enemy in self.enemy_sprites:
                 enemy.speed = 1
