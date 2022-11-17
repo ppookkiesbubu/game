@@ -1,5 +1,5 @@
 from random import randint
-import pygame
+import pygame,sys
 from support2 import import_csv_layout,import_cut_graphics
 from setting2 import tile_size , screen_height ,screen_width
 from tile2 import Tile,StaticTile,AnimatedTile,Coin
@@ -7,21 +7,25 @@ from enemy2 import Enemy
 from player import Player
 from particles import ParticleEffect
 from ui import UI
+# from main3 import menu
+
 
 
 class Level:
     def __init__(self,level_data,surface):
         self.display_surface = surface
         self.world_shift = 0
+        self.screen = pygame.display.set_mode((screen_width,screen_height))
 
         #time
         self.clock = pygame.time.Clock()
         self.sec = 0
         self.sec_count = 0
         self.sec = self.clock.tick(60)/1000
-
+      
         self.time_state = 0
         self.check_state = 0
+        self.status = 0
 
         #audio
         self.coin_sound = pygame.mixer.Sound('../graphics/sound/coin.wav')
@@ -29,6 +33,7 @@ class Level:
         self.bomb_sound = pygame.mixer.Sound('../graphics/sound/item2.wav')
         self.collision_sound = pygame.mixer.Sound('../graphics/sound/collision3.wav')
         self.gameover_sound  = pygame.mixer.Sound('../graphics/sound/gameover2.wav')
+        self.gamewin_sound = pygame.mixer.Sound('../graphics/sound/gamewin.wav')
         self.bombbomb_sound = pygame.mixer.Sound('../graphics/sound/bomb.wav')
         self.bg_sound = pygame.mixer.Sound('../graphics/sound/bgsound.wav')
         # self.bg_sound.play(-1)
@@ -268,10 +273,12 @@ class Level:
                 for enemy in self.enemy_sprites:
                     enemy.speed = randint(3,5)
 
+
+
     def check_game_over(self):
-      
+        global time   
+        time = []
         if self.cur_health <= 0 or self.player.sprite.direction.y >= 35:
-            global game_status
             self.gameover_sound.play()
             self.collision_sound.stop()
             self.bg_sound.stop()
@@ -279,16 +286,22 @@ class Level:
             game_over = self.font.render('GAME OVER',False,'#33323d')
             self.display_surface.blit(game_over,(500,43))
             self.check_state = 1
-            game_status = 0
             self.time_state = 1
+            self.world_shift = 0
+            time.append(time_count)
+            self.status = 1         
+
 
     def check_win(self):
-            if self.coin <= 0:
-                game_win = self.font.render('YOU WIN!!!',False,'#33323d')
-                self.display_surface.blit(game_win,(500,43))
-                self.check_state = 1
-                self.time_state = 1
-                game_status = 0
+        if self.coin <= 150:
+            self.gamewin_sound.play()
+            game_win = self.font.render('YOU WIN!!!',False,'#33323d')
+            self.display_surface.blit(game_win,(500,43))
+            self.check_state = 1
+            self.time_state = 1
+            self.world_shift = 0
+            time.append(time_count)
+            self.status = 1            
 
     def time(self,sc):    
         # self.sec = self.clock.tick(30)/1000
@@ -303,6 +316,22 @@ class Level:
             sec_surf = self.font.render(str(time_count),False,'#33323d')
             # sec_rect = sec_surf.get_rect(midleft = (self.sec_rect.right+4,self.sec_rect.centery))
             self.display_surface.blit(sec_surf,(1075,20))
+
+    # def over_win(self):
+    #     if self.status == 1:
+    #         back_button = pygame.Rect((screen_width/2 + 120,screen_height/4+400),(180,80))
+    #         resume_button = pygame.Rect((screen_width/2 + 330,screen_height/4+400),(200,80))
+    #         pygame.draw.rect(self.screen,('black'),back_button)
+    #         pygame.draw.rect(self.screen,('black'),resume_button)
+    #         for event in pygame.event.get():
+    #             if event.type == pygame.QUIT:
+    #                 pygame.quit() 
+    #                 sys.exit()
+    #             if event.type == pygame.MOUSEBUTTONDOWN:
+    #                 mx,my = pygame.mouse.get_pos()
+    #                 if resume_button.collidepoint((mx,my)):
+    #                     menu()
+
 
 
     def run(self):
@@ -361,6 +390,7 @@ class Level:
         self.check_game_over()
         self.check_win()
         self.check_bomb()
+        # self.over_win()
 
         if self.check_state == 0:
             self.horizontal_movement_collision()

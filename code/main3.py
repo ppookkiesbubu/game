@@ -72,6 +72,22 @@ def score():
                         menu()
         pygame.display.update()
         clock.tick(60)
+        
+# def ranking():
+#     global time 
+#     time = []
+#     scores = []
+#     rankscores = []
+#     with open('score.txt') as file:
+#         for line in file:
+#             name, score = line.split(',')
+#             score = int(score)
+#             scores.append((name, score))
+#         scores.sort(key=lambda s: s[1])
+#         scores.reverse()
+#         for num in range(0, 5):
+#             rankscores.insert(num,scores[num])
+#         file.flush()
 
 
 def display_text(text, size, color, pos, screen):
@@ -81,14 +97,17 @@ def display_text(text, size, color, pos, screen):
     screen.blit(text_surf, text_rect)
 
 def name():
-    prev_player_score = 0
     name_input = ''
-    text_box = pygame.Rect((screen_width/2 - 350/2, screen_height/2 - 20), (350, 50))
+    text_box = pygame.Rect((screen_width/2 - 225, screen_height/2 - 35), (480, 80))
+    # start_button = pygame.Rect((1000,700),(100,50))
+    # pygame.draw.rect(screen,('black'),start_button)
     active = False
     while True:
-        screen.fill("white")
-        name_button = pygame.Rect((screen_width - 250, screen_height/2 + 200), (150, 60))
-        pygame.draw.rect(screen, ('black'), name_button)
+        # name_button = pygame.Rect((screen_width - 250, screen_height/2 + 200), (150, 60))
+     
+        # pygame.draw.rect(screen, ('black'), name_button)
+        start_button = pygame.Rect((screen_width/2 + 330,screen_height/4+400),(200,80))
+        back_button = pygame.Rect((screen_width/2 + 120,screen_height/4+400),(180,80))
         display_text('start', 30, ('white'), (screen_width - 175, screen_height/2 + 200 + 30), screen)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -103,6 +122,11 @@ def name():
                     active = True
                 else:
                     active = False
+                if start_button.collidepoint((mx,my)):
+                    game()
+                if back_button.collidepoint((mx,my)):
+                    menu()
+                    
             if event.type == pygame.KEYDOWN:
                 if active:
                     if event.key == pygame.K_BACKSPACE:
@@ -112,15 +136,35 @@ def name():
                         print(event.unicode)
                         if surf.get_width() > text_box.w - 20:
                             name_input = name_input[:-1]
-        display_text(f'SCORE : {prev_player_score}', 20,('black'), (screen_width/2, 180), screen)
-        display_text('TYPE YOUR NAME', 20,('black'), (screen_width/2, 300), screen)
+        # display_text(f'SCORE : {prev_player_score}', 20,('black'), (screen_width/2, 180), screen)
+        # display_text('TYPE YOUR NAME', 20,('black'), (screen_width/2, 300), screen)
         if active:
-            color = pygame.Color('black')
+            name_bg = pygame.image.load('../graphics/menu/Inputname2.png')
         else:
-            color = pygame.Color('grey')
-        pygame.draw.rect(screen, color, text_box)
-        surf = font.render(name_input, True, 'white')
+            name_bg = pygame.image.load('../graphics/menu/Inputname.png')
+        screen.blit(name_bg,(0,0))
+        # start_button = pygame.Rect((screen_width/2 + 330,screen_height/4+400),(200,80))
+        # back_button = pygame.Rect((screen_width/2 + 120,screen_height/4+400),(180,80))
+        # pygame.draw.rect(screen,('black'),start_button)
+        # pygame.draw.rect(screen,('black'),back_button)
+        # for event in pygame.event.get():
+        #     if event.type == pygame.MOUSEBUTTONDOWN:
+        #         mx, my = pygame.mouse.get_pos()
+        #         if start_button.collidepoint((mx,my)):
+        #             game()
+        #         if back_button.collidepoint((mx,my)):
+        #             menu()
+        surf = font.render(name_input, True, 'black')
         screen.blit(surf, (text_box.x + 5, text_box.y + 20))
         pygame.display.update()
         clock.tick(60)
+
+# def over_win():
+#     global status
+#     if status == 1:
+#         back_button = pygame.Rect((screen_width/2 + 120,screen_height/4+400),(180,80))
+#         resume_button = pygame.Rect((screen_width/2 + 330,screen_height/4+400),(200,80))
+#         pygame.draw.rect(screen,('black'),back_button)
+#         pygame.draw.rect(screen,('black'),resume_button)
+
 menu()
