@@ -17,7 +17,7 @@ class UI:
         self.coin = pygame.image.load('../graphics/ui/coin.png')
         self.coin = pygame.transform.scale(self.coin,(32,32))
         self.coin_rect = self.coin.get_rect(topleft = (50,61))
-        self.font = pygame.font.Font('../graphics/ui/font.ttf',30)
+        self.font = pygame.font.Font('../graphics/ui/font1.ttf',30)
 
     def show_health(self,current,full):
         self.display_surface.blit(self.health_bar,(50,35))

@@ -8,21 +8,28 @@ pygame.init()
 
 screen = pygame.display.set_mode((screen_width,screen_height)) 
 clock = pygame.time.Clock()
-level = Level(level_0,screen)
+name_input = ''
+level = Level(level_0,screen,name_input)
 font = pygame.font.Font('../graphics/ui/font.ttf',30)
+sound = pygame.mixer.Sound('../graphics/sound/click.wav')
 sec = 0
 sec_count = 0
 state = 1
 
+times = []
+ranktimes = []
+show = 0
+
+
 def game():
+    level.__init__(level_0,screen,name_input)
     while True:
-        # global game_status
-        # game_status = 1
         screen.fill('Grey')
-        # if game_status == 1:
-        level.run()
-        # elif game_status == 0:
-            # level.check_game_over()
+        if level.status == 0:
+            level.run()
+        elif level.status == 1:
+            game_over()
+            
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit() 
@@ -31,37 +38,48 @@ def game():
         clock.tick(60)
 
 def menu():
+    global show
     while True :
-        global game_status
-        game_status = 1
-        if game_status == 1:
-            game_status = 0
-            bg_menu = pygame.image.load('../graphics/menu/Menu.png')
-            screen.blit(bg_menu,(0,0))
-            play_button = pygame.Rect((screen_width/2 - 100,screen_height/2-110),(210,130))
-            score_button = pygame.Rect((screen_width/2 - 100,screen_height/2 + 85),(210,130))
-            
-            for event in pygame.event.get():
+        bg_menu = pygame.image.load('../graphics/menu/Menu.png')
+        screen.blit(bg_menu,(0,0))
+        play_button = pygame.Rect((screen_width/2 - 100,screen_height/2-110),(210,130))
+        score_button = pygame.Rect((screen_width/2 - 100,screen_height/2 + 85),(210,130))
+        show = 0
+        for event in pygame.event.get():
 
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()            
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    mx,my = pygame.mouse.get_pos()
-                    if play_button.collidepoint((mx,my)):
-                        name()
-                    if score_button.collidepoint((mx,my)):
-                        score()
-                    return state == 0      
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()            
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mx,my = pygame.mouse.get_pos()
+                if play_button.collidepoint((mx,my)):
+                    sound.play()
+                    name()
+                if score_button.collidepoint((mx,my)):
+                    sound.play()
+                    score()
+                return state == 0      
         pygame.display.update()
         clock.tick(60)
 
 def score():
     while True:
+        global ranktimes
         bg_score = pygame.image.load('../graphics/menu/Scoreboard.png')
         screen.blit(bg_score,(0,0))
         back_button = pygame.Rect((screen_width-250,screen_height-100),(200,75))
         # pygame.draw.rect(screen,(0,0,0),back_button)
+        ranking()
+        print(ranktimes)
+        space = 0
+        for i in range(0, 5):
+            display_text(f"{ranktimes[i][0]}", 20, ('black'), (screen_width/2 - 100, screen_height/3 + space), screen)
+            space += 50
+        space = 0
+        for i in range(0, 5):
+            display_text(f"{ranktimes[i][1]}", 20, ('black'), (screen_width/2 +100 , screen_height/3 + space), screen)
+            space += 50
+
         for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit() 
@@ -69,26 +87,29 @@ def score():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mx,my = pygame.mouse.get_pos()
                     if back_button.collidepoint((mx,my)):
+                        sound.play()
                         menu()
         pygame.display.update()
         clock.tick(60)
         
-# def ranking():
-#     global time 
-#     time = []
-#     scores = []
-#     rankscores = []
-#     with open('score.txt') as file:
-#         for line in file:
-#             name, score = line.split(',')
-#             score = int(score)
-#             scores.append((name, score))
-#         scores.sort(key=lambda s: s[1])
-#         scores.reverse()
-#         for num in range(0, 5):
-#             rankscores.insert(num,scores[num])
-#         file.flush()
-
+def ranking():
+    global  times , ranktimes , show
+    while show != 1 : 
+        times = []
+        ranktimes = []  
+        with open('score.txt') as file:
+            for line in file:
+                name, score = line.split(',')
+                score = float(score)
+                times.append((name, score))
+            times.sort(key=lambda s: s[1])
+            # times.reverse()
+            print(times)
+            for num in range(0, 5):
+                ranktimes.insert(num,times[num])
+            print(ranktimes)
+            file.flush()
+            show = 1
 
 def display_text(text, size, color, pos, screen):
     font = pygame.font.Font('../graphics/ui/font.ttf', size)
@@ -97,7 +118,7 @@ def display_text(text, size, color, pos, screen):
     screen.blit(text_surf, text_rect)
 
 def name():
-    name_input = ''
+    global name_input
     text_box = pygame.Rect((screen_width/2 - 225, screen_height/2 - 35), (480, 80))
     # start_button = pygame.Rect((1000,700),(100,50))
     # pygame.draw.rect(screen,('black'),start_button)
@@ -108,6 +129,7 @@ def name():
         # pygame.draw.rect(screen, ('black'), name_button)
         start_button = pygame.Rect((screen_width/2 + 330,screen_height/4+400),(200,80))
         back_button = pygame.Rect((screen_width/2 + 120,screen_height/4+400),(180,80))
+        done_button = pygame.Rect((screen_width/2 + 200,screen_height/4+230),(120,60))
         display_text('start', 30, ('white'), (screen_width - 175, screen_height/2 + 200 + 30), screen)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -123,10 +145,14 @@ def name():
                 else:
                     active = False
                 if start_button.collidepoint((mx,my)):
+                    sound.play()
                     game()
                 if back_button.collidepoint((mx,my)):
+                    sound.play()
                     menu()
-                    
+                # if done_button.collidepoint((mx,my)):
+                #     name_ar.append(name_input)
+
             if event.type == pygame.KEYDOWN:
                 if active:
                     if event.key == pygame.K_BACKSPACE:
@@ -143,6 +169,7 @@ def name():
         else:
             name_bg = pygame.image.load('../graphics/menu/Inputname.png')
         screen.blit(name_bg,(0,0))
+        # pygame.draw.rect(screen,('black'),done_button)
         # start_button = pygame.Rect((screen_width/2 + 330,screen_height/4+400),(200,80))
         # back_button = pygame.Rect((screen_width/2 + 120,screen_height/4+400),(180,80))
         # pygame.draw.rect(screen,('black'),start_button)
@@ -159,12 +186,31 @@ def name():
         pygame.display.update()
         clock.tick(60)
 
-# def over_win():
-#     global status
-#     if status == 1:
-#         back_button = pygame.Rect((screen_width/2 + 120,screen_height/4+400),(180,80))
-#         resume_button = pygame.Rect((screen_width/2 + 330,screen_height/4+400),(200,80))
-#         pygame.draw.rect(screen,('black'),back_button)
-#         pygame.draw.rect(screen,('black'),resume_button)
+def game_over():
+
+    while True :
+        time = level.time_ar
+        back_button = pygame.Rect((screen_width/2 + 120,screen_height/4+400),(180,80))
+        resume_button = pygame.Rect((screen_width/2 + 330,screen_height/4+400),(200,80))
+        pygame.draw.rect(screen,('black'),back_button)
+        pygame.draw.rect(screen,('black'),resume_button)
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mx, my = pygame.mouse.get_pos()
+                if resume_button.collidepoint((mx,my)):
+                    
+                    level.__init__(level_0,screen,name_input)
+                    game()
+                if back_button.collidepoint((mx,my)):
+    
+                    menu()
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+        pygame.display.update()
+        clock.tick(60)
 
 menu()
