@@ -26,6 +26,7 @@ class Level:
         self.time_state = 0
         self.check_state = 0
         self.status = 0
+        self.bg = False
 
         #audio
         self.coin_sound = pygame.mixer.Sound('../graphics/sound/coin.wav')
@@ -36,7 +37,8 @@ class Level:
         self.gamewin_sound = pygame.mixer.Sound('../graphics/sound/gamewin.wav')
         self.bombbomb_sound = pygame.mixer.Sound('../graphics/sound/bomb.wav')
         self.bg_sound = pygame.mixer.Sound('../graphics/sound/bgsound.wav')
-        # self.bg_sound.play(-1)
+        self.bg_sound.set_volume(0.3)
+        self.bg_sound.play(-1)
 
 
         #health bar
@@ -281,24 +283,27 @@ class Level:
             self.collision_sound.stop()
             self.bg_sound.stop()
             self.cur_health = 0
-            game_over = self.font.render('GAME OVER',False,'#33323d')
-            self.display_surface.blit(game_over,(500,43))
+            # game_over = self.font.render('GAME OVER',False,'#33323d')
+            # self.display_surface.blit(game_over,(500,43))
             self.check_state = 1
             self.time_state = 1
             self.world_shift = 0
             self.time_ar = time_count
-            self.status = 1       
+            self.status = 1     
+            self.bg = False
 
     def check_win(self):
         if self.coin <= 150:
             self.gamewin_sound.play()
-            game_win = self.font.render('YOU WIN!!!',False,'#33323d')
-            self.display_surface.blit(game_win,(500,43))
+            self.bg_sound.stop()
+            # game_win = self.font.render('YOU WIN!!!',False,'#33323d')
+            # self.display_surface.blit(game_win,(500,43))
             self.check_state = 1
             self.time_state = 1
             self.world_shift = 0
             self.time_ar = time_count
-            self.status = 1            
+            self.status = 1
+            self.bg = True         
             file = open('score.txt', 'a')
             file.write(f'{self.name_input}, {self.time_ar}\n')
             file.flush()
@@ -317,21 +322,6 @@ class Level:
             sec_surf = self.font.render(str(time_count),False,'#33323d')
             # sec_rect = sec_surf.get_rect(midleft = (self.sec_rect.right+4,self.sec_rect.centery))
             self.display_surface.blit(sec_surf,(1075,20))
-
-    # def over_win(self):
-    #     if self.status == 1:
-    #         back_button = pygame.Rect((screen_width/2 + 120,screen_height/4+400),(180,80))
-    #         resume_button = pygame.Rect((screen_width/2 + 330,screen_height/4+400),(200,80))
-    #         pygame.draw.rect(self.screen,('black'),back_button)
-    #         pygame.draw.rect(self.screen,('black'),resume_button)
-    #         for event in pygame.event.get():
-    #             if event.type == pygame.QUIT:
-    #                 pygame.quit() 
-    #                 sys.exit()
-    #             if event.type == pygame.MOUSEBUTTONDOWN:
-    #                 mx,my = pygame.mouse.get_pos()
-    #                 if resume_button.collidepoint((mx,my)):
-    #                     menu()
 
     def run(self):
         # #bg

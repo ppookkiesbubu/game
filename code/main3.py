@@ -73,12 +73,12 @@ def score():
         print(ranktimes)
         space = 0
         for i in range(0, 5):
-            display_text(f"{ranktimes[i][0]}", 20, ('black'), (screen_width/2 - 100, screen_height/3 + space), screen)
-            space += 50
+            display_text(f"{ranktimes[i][0]}", 20, ('black'), (screen_width/2 - 75, (screen_height/3 + 50) + space), screen)
+            space += 75
         space = 0
         for i in range(0, 5):
-            display_text(f"{ranktimes[i][1]}", 20, ('black'), (screen_width/2 +100 , screen_height/3 + space), screen)
-            space += 50
+            display_text(f"{ranktimes[i][1]}", 20, ('black'), (screen_width/2 +120 , (screen_height/3 +50)+ space), screen)
+            space += 75
 
         for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -124,8 +124,7 @@ def name():
     # pygame.draw.rect(screen,('black'),start_button)
     active = False
     while True:
-        # name_button = pygame.Rect((screen_width - 250, screen_height/2 + 200), (150, 60))
-     
+        # name_button = pygame.Rect((screen_width - 250, screen_height/2 + 200), (150, 60))   
         # pygame.draw.rect(screen, ('black'), name_button)
         start_button = pygame.Rect((screen_width/2 + 330,screen_height/4+400),(200,80))
         back_button = pygame.Rect((screen_width/2 + 120,screen_height/4+400),(180,80))
@@ -187,30 +186,36 @@ def name():
         clock.tick(60)
 
 def game_over():
-
     while True :
+        bg = level.bg
         time = level.time_ar
-        back_button = pygame.Rect((screen_width/2 + 120,screen_height/4+400),(180,80))
-        resume_button = pygame.Rect((screen_width/2 + 330,screen_height/4+400),(200,80))
-        pygame.draw.rect(screen,('black'),back_button)
-        pygame.draw.rect(screen,('black'),resume_button)
+        back_button = pygame.Rect((100,screen_height/4+400),(180,100))
+        # resume_button = pygame.Rect((screen_width/2 + 330,screen_height/4+400),(200,80))
+        if bg:
+            img = pygame.image.load('../graphics/menu/Gamewin.png')
+        else:
+            img = pygame.image.load('../graphics/menu/Gameover.png')
+        screen.blit(img,(0,0))
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mx, my = pygame.mouse.get_pos()
-                if resume_button.collidepoint((mx,my)):
-                    
-                    level.__init__(level_0,screen,name_input)
-                    game()
-                if back_button.collidepoint((mx,my)):
-    
+                # if resume_button.collidepoint((mx,my)):                   
+                #     level.__init__(level_0,screen,name_input)
+                #     game()
+                if back_button.collidepoint((mx,my)):  
+                    sound.play() 
                     menu()
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
+            # if event.type == pygame.QUIT:
+            #     pygame.quit()
+            #     sys.exit()
+            elif event.type == pygame.QUIT and event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+        # pygame.draw.rect(screen,('black'),back_button)
         pygame.display.update()
         clock.tick(60)
+    
+
+
 
 menu()
