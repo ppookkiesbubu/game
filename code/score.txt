@@ -10,8 +10,6 @@ pw, 4322.97
 pookpook, 6.99
 pookpookkie, 10.37
 pooky, 12.54
-, 9.41
-, 9.61
 pooky, 14.5
 pooky, 7.63
 pooky, 10.4
@@ -21,3 +19,4 @@ pooky, 6.86
 pookypook, 104.69
 bim, 9.1
 bim, 9.98
+pookkie, 86.29

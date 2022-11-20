@@ -293,7 +293,7 @@ class Level:
             self.bg = False
 
     def check_win(self):
-        if self.coin <= 150:
+        if self.coin <= 0:
             self.gamewin_sound.play()
             self.bg_sound.stop()
             # game_win = self.font.render('YOU WIN!!!',False,'#33323d')
@@ -357,7 +357,7 @@ class Level:
         self.mushroom_sprites.update(self.world_shift)
 
 
-        #enemy
+        # enemy
         self.enemy_sprites.update(self.world_shift)
         self.box_sprites.update(self.world_shift)
         self.enemy_collision_reverse()

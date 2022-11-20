@@ -1,5 +1,5 @@
 import pygame
-from tile2 import Tile
+from tile import Tile
 from setting import tile_size, screen_width
 from player import Player
 
